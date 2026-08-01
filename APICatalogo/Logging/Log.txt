@@ -122,3 +122,7 @@ SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`, `p`.`ProdutoId`, `p`.`Cat
 FROM `Categorias` AS `c`
 LEFT JOIN `Produtos` AS `p` ON `c`.`CategoriaId` = `p`.`CategoriaId`
 ORDER BY `c`.`CategoriaId`
+Information: 14 - Now listening on: http://localhost:5000
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: C:\1-Klaudiane\ASP.NET_Core\APICatalogo\APICatalogo

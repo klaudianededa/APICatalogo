@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace APICatalogo.DTOs;
 
-internal class CategoriaDTO
+public class CategoriaDTO
 {
     public int CategoriaId { get; set; }
 
