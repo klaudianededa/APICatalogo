@@ -1,4 +1,5 @@
 ﻿using APICatalogo.DTOs;
+using APICatalogo.DTOs.Mappings;
 using APICatalogo.Models;
 using APICatalogo.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -27,17 +28,19 @@ public class CategoriasController : ControllerBase
         if (categorias is null)
             return NotFound("Nenhuma categoria encontrada...");
 
-        var categoriasDto = new List<CategoriaDTO>();
-        foreach (var categoria in categorias)
-        {
-             var categoriaDto = new CategoriaDTO
-            {
-                CategoriaId = categoria.CategoriaId,
-                Nome = categoria.Nome,
-                ImagemUrl = categoria.ImagemUrl
-            };
-            categoriasDto.Add(categoriaDto);
-        }
+        //var categoriasDto = new List<CategoriaDTO>();
+        //foreach (var categoria in categorias)
+        //{
+        //     var categoriaDto = new CategoriaDTO
+        //    {
+        //        CategoriaId = categoria.CategoriaId,
+        //        Nome = categoria.Nome,
+        //        ImagemUrl = categoria.ImagemUrl
+        //    };
+        //    categoriasDto.Add(categoriaDto);
+        //}
+
+        var categoriasDto = categorias.ToCategoriaDTOList();
 
         return Ok(categoriasDto);
     }
@@ -53,12 +56,14 @@ public class CategoriasController : ControllerBase
             return NotFound($"Categoria com id= {id} não encontrada...");
         }
 
-        var categoriaDto = new CategoriaDTO
-        {
-            CategoriaId = categoria.CategoriaId,
-            Nome = categoria.Nome,
-            ImagemUrl = categoria.ImagemUrl
-        };
+        //var categoriaDto = new CategoriaDTO
+        //{
+        //    CategoriaId = categoria.CategoriaId,
+        //    Nome = categoria.Nome,
+        //    ImagemUrl = categoria.ImagemUrl
+        //};
+
+        var categoriaDto = categoria.ToCategoriaDTO();
 
         return Ok(categoriaDto);
     }
@@ -72,22 +77,26 @@ public class CategoriasController : ControllerBase
             return BadRequest("Dados inválidos");
         }
 
-        var categoria = new Categoria() //convertendo DTO para entidade
-        {
-            CategoriaId = categoriaDto.CategoriaId,
-            Nome = categoriaDto.Nome,
-            ImagemUrl = categoriaDto.ImagemUrl
-        };
+        //var categoria = new Categoria() //convertendo DTO para entidade
+        //{
+        //    CategoriaId = categoriaDto.CategoriaId,
+        //    Nome = categoriaDto.Nome,
+        //    ImagemUrl = categoriaDto.ImagemUrl
+        //};
+
+        var categoria = categoriaDto.ToCategoria();
 
         var categoriaCriada = _uof.CategoriaRepository.Create(categoria); //o create espera uma entidade, por isso a conversão acima
         _uof.Commit();
 
-        var novaCategoriaDto = new CategoriaDTO //convertendo entidade para DTO, pois o retorno da API é um DTO
-        {
-            CategoriaId = categoriaCriada.CategoriaId,
-            Nome = categoriaCriada.Nome,
-            ImagemUrl = categoriaCriada.ImagemUrl
-        };
+        //var novaCategoriaDto = new CategoriaDTO //convertendo entidade para DTO, pois o retorno da API é um DTO
+        //{
+        //    CategoriaId = categoriaCriada.CategoriaId,
+        //    Nome = categoriaCriada.Nome,
+        //    ImagemUrl = categoriaCriada.ImagemUrl
+        //};
+
+        var novaCategoriaDto = categoriaCriada.ToCategoriaDTO();
 
         return new CreatedAtRouteResult("ObterCategoria",  
             new { id = novaCategoriaDto.CategoriaId }, 
@@ -103,22 +112,26 @@ public class CategoriasController : ControllerBase
             return BadRequest("Dados inválidos");
         }
 
-        var categoria = new Categoria() //convertendo DTO para entidade
-        {
-            CategoriaId = categoriaDto.CategoriaId,
-            Nome = categoriaDto.Nome,
-            ImagemUrl = categoriaDto.ImagemUrl
-        };
+        //var categoria = new Categoria() //convertendo DTO para entidade
+        //{
+        //    CategoriaId = categoriaDto.CategoriaId,
+        //    Nome = categoriaDto.Nome,
+        //    ImagemUrl = categoriaDto.ImagemUrl
+        //};
+
+        var categoria = categoriaDto.ToCategoria();
 
         var categoriaAtualizada = _uof.CategoriaRepository.Update(categoria);
         _uof.Commit();
 
-        var categoriaAtualizadaDto = new CategoriaDTO //convertendo entidade para DTO, pois o retorno da API é um DTO
-        {
-            CategoriaId = categoriaAtualizada.CategoriaId,
-            Nome = categoriaAtualizada.Nome,
-            ImagemUrl = categoriaAtualizada.ImagemUrl
-        };
+        //var categoriaAtualizadaDto = new CategoriaDTO //convertendo entidade para DTO, pois o retorno da API é um DTO
+        //{
+        //    CategoriaId = categoriaAtualizada.CategoriaId,
+        //    Nome = categoriaAtualizada.Nome,
+        //    ImagemUrl = categoriaAtualizada.ImagemUrl
+        //};
+
+        var categoriaAtualizadaDto = categoriaAtualizada.ToCategoriaDTO();
 
         return Ok(categoriaAtualizadaDto);
     }
@@ -137,12 +150,15 @@ public class CategoriasController : ControllerBase
         var categoriaExcluida = _uof.CategoriaRepository.Delete(categoria);
         _uof.Commit();
         
-        var categoriaExcluidaDto = new CategoriaDTO //convertendo entidade para DTO, pois o retorno da API é um DTO
-        {
-            CategoriaId = categoriaExcluida.CategoriaId,
-            Nome = categoriaExcluida.Nome,
-            ImagemUrl = categoriaExcluida.ImagemUrl
-        };
+        //var categoriaExcluidaDto = new CategoriaDTO //convertendo entidade para DTO, pois o retorno da API é um DTO
+        //{
+        //    CategoriaId = categoriaExcluida.CategoriaId,
+        //    Nome = categoriaExcluida.Nome,
+        //    ImagemUrl = categoriaExcluida.ImagemUrl
+        //};
+
+        var categoriaExcluidaDto = categoriaExcluida.ToCategoriaDTO();
+
         return Ok(categoriaExcluidaDto);
      
     }
