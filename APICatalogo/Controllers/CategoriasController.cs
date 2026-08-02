@@ -28,6 +28,11 @@ public class CategoriasController : ControllerBase
     {
         var categorias = _uof.CategoriaRepository.GetCategorias(categoriasParameters);
 
+        return ObterCategorias(categorias);
+    }
+
+    private ActionResult<IEnumerable<CategoriaDTO>> ObterCategorias(PagedList<Categoria> categorias)
+    {
         var metadata = new
         {
             categorias.TotalCount,
@@ -43,6 +48,15 @@ public class CategoriasController : ControllerBase
         var categoriasDto = categorias.ToCategoriaDTOList();
 
         return Ok(categoriasDto);
+    }
+
+    [HttpGet("filter/nome/pagination")]
+    public ActionResult<IEnumerable<CategoriaDTO>> GetCategoriasFiltradas([FromQuery]
+                                    CategoriasFiltroNome categoriasFiltro)
+    {
+        var categoriasFiltradas = _uof.CategoriaRepository.GetCategoriasFiltroNome(categoriasFiltro);
+
+        return ObterCategorias(categoriasFiltradas);
     }
 
     [HttpGet]
@@ -143,8 +157,8 @@ public class CategoriasController : ControllerBase
 
         var novaCategoriaDto = categoriaCriada.ToCategoriaDTO();
 
-        return new CreatedAtRouteResult("ObterCategoria",  
-            new { id = novaCategoriaDto.CategoriaId }, 
+        return new CreatedAtRouteResult("ObterCategoria",
+            new { id = novaCategoriaDto.CategoriaId },
             novaCategoriaDto);
     }
 
@@ -184,7 +198,7 @@ public class CategoriasController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult<CategoriaDTO> Delete(int id)
     {
-        var categoria = _uof.CategoriaRepository.Get(c => c.CategoriaId == id); 
+        var categoria = _uof.CategoriaRepository.Get(c => c.CategoriaId == id);
 
         if (categoria is null)
         {
@@ -194,7 +208,7 @@ public class CategoriasController : ControllerBase
 
         var categoriaExcluida = _uof.CategoriaRepository.Delete(categoria);
         _uof.Commit();
-        
+
         //var categoriaExcluidaDto = new CategoriaDTO //convertendo entidade para DTO, pois o retorno da API é um DTO
         //{
         //    CategoriaId = categoriaExcluida.CategoriaId,
@@ -205,6 +219,6 @@ public class CategoriasController : ControllerBase
         var categoriaExcluidaDto = categoriaExcluida.ToCategoriaDTO();
 
         return Ok(categoriaExcluidaDto);
-     
+
     }
 }
