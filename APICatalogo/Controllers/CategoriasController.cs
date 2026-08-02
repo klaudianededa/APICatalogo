@@ -68,6 +68,26 @@ public class CategoriasController : ControllerBase
         return Ok(categoriaDto);
     }
 
+    [HttpPost("varios")]
+    public ActionResult PostVarios([FromBody] IEnumerable<CategoriaDTO> categoriasDto)
+    {
+        if (categoriasDto == null || !categoriasDto.Any())
+        {
+            return BadRequest("A lista de categorias enviada está vazia ou incorreta.");
+        }
+
+        var categorias = categoriasDto.Select(c => c.ToCategoria()).ToList();
+
+        foreach (var categoria in categorias)
+        {
+            _uof.CategoriaRepository.Create(categoria);
+        }
+
+        _uof.Commit();
+
+        return Ok("Lote de categorias cadastrado com sucesso no banco de dados.");
+    }
+
     [HttpPost]
     public ActionResult<CategoriaDTO> Post(CategoriaDTO categoriaDto)
     {

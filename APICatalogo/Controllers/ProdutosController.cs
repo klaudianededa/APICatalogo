@@ -1,5 +1,6 @@
 ﻿using APICatalogo.DTOs;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
@@ -32,6 +33,17 @@ public class ProdutosController : ControllerBase
         return Ok(produtosDto);
     }
 
+    [HttpGet("pagination")]
+    public ActionResult<IEnumerable<ProdutoDTO>> Get([FromQuery]
+                                    ProdutosParameters produtosParameters)
+    {
+        var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters);
+        var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+        return Ok(produtosDto);
+    }
+
+
     [HttpGet]
     public ActionResult<IEnumerable<ProdutoDTO>> Get()
     {
@@ -57,7 +69,27 @@ public class ProdutosController : ControllerBase
         var produtoDto = _mapper.Map<ProdutoDTO>(produto);
         return Ok(produtoDto);
     }
+   
+    [HttpPost("varios")]
+    public ActionResult PostVarios([FromBody] IEnumerable<ProdutoDTO> produtosDto)
+    {
+        if (produtosDto == null || !produtosDto.Any())
+        {
+            return BadRequest("A lista de produtos enviada está vazia ou incorreta.");
+        }
 
+        var produtos = _mapper.Map<IEnumerable<Produto>>(produtosDto);
+
+        foreach (var produto in produtos)
+        {
+            _uof.ProdutoRepository.Create(produto);
+        }
+
+        _uof.Commit();
+
+        return Ok("Lote de produtos cadastrado com sucesso no banco de dados.");
+    }
+    
     [HttpPost]
     public ActionResult<ProdutoDTO> Post(ProdutoDTO produtoDto)
     {
